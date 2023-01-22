@@ -1,9 +1,6 @@
 {
   "name": "dynamo-crud-cdk",
   "version": "0.1.0",
-  "bin": {
-    "dynamo-crud-cdk": "bin/dynamo-crud-cdk.js"
-  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",

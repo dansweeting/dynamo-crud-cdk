@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/dynamo-crud-cdk.ts",
+  "app": "npx ts-node --prefer-ts-exts infra/bin/dynamo-crud-cdk.ts",
   "watch": {
     "include": [
       "**"
