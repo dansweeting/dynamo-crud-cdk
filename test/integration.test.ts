@@ -45,7 +45,7 @@ describe('CRUD API', () => {
         expect(actualJson).toEqual(expectedJson);
     })
 
-    it('second PUT increments version', async () => {
+    it('PUT is valid when version is incremented', async () => {
         const id = guid()
         const url = `${apiBaseUrl}/${id}`
 
@@ -75,10 +75,9 @@ describe('CRUD API', () => {
         })
 
         expect(actualResponseTwo).toEqual(expectedResponseTwo)
-        console.log({id})
     })
 
-    it('PUT with existing version number is a 409', async () => {
+    it('PUT with existing version number is a 409 conflict', async () => {
         const id = guid()
         const url = `${apiBaseUrl}/${id}`
 
@@ -95,7 +94,7 @@ describe('CRUD API', () => {
         const putResponseTwo = await fetch(url, { method: 'PUT', body: JSON.stringify({
                 ...versionOne,
                 foo: 'baz',
-                version: 1,
+                version: 1, // trying PUT a stale version is a version conflict.
             })})
 
         expect(putResponseTwo.status).toBe(409)
