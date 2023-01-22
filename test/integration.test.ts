@@ -34,7 +34,6 @@ describe('CRUD API', () => {
 
     const expectedJson = {
       id,
-      sortKey: 'latest',
       version: 1,
       ...resource
     }

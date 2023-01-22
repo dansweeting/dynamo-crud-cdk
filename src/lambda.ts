@@ -32,6 +32,8 @@ export const getResource: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV
         }
       }
 
+      delete retrievedItem.sortKey
+
       return {
         statusCode: 200,
         body: JSON.stringify(retrievedItem)
