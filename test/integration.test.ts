@@ -44,4 +44,60 @@ describe('CRUD API', () => {
 
         expect(actualJson).toEqual(expectedJson);
     })
+
+    it('second PUT increments version', async () => {
+        const id = guid()
+        const url = `${apiBaseUrl}/${id}`
+
+        const resource = { foo: 'bar', child: { foo: 'child bar'}}
+        const putResponseOne = await fetch(url, { method: 'PUT', body: JSON.stringify(resource) })
+
+        expect(putResponseOne.status).toBe(200)
+
+        const getResponseOne = await fetch(url, { method: 'GET'})
+        expect(getResponseOne.status).toBe(200)
+
+        const versionOne = await getResponseOne.json()
+
+        const putResponseTwo = await fetch(url, { method: 'PUT', body: JSON.stringify({
+            ...versionOne,
+            foo: 'baz',
+            version: 2,
+        })})
+
+        expect(putResponseTwo.status).toBe(200)
+        const getResponseTwo = await fetch(url, { method: 'GET'})
+        const actualResponseTwo  = await getResponseTwo.json();
+
+        const expectedResponseTwo = expect.objectContaining({
+            version: 2,
+            foo: 'baz'
+        })
+
+        expect(actualResponseTwo).toEqual(expectedResponseTwo)
+        console.log({id})
+    })
+
+    it('PUT with existing version number is a 409', async () => {
+        const id = guid()
+        const url = `${apiBaseUrl}/${id}`
+
+        const resource = { foo: 'bar', child: { foo: 'child bar'}}
+        const putResponseOne = await fetch(url, { method: 'PUT', body: JSON.stringify(resource) })
+
+        expect(putResponseOne.status).toBe(200)
+
+        const getResponseOne = await fetch(url, { method: 'GET'})
+        expect(getResponseOne.status).toBe(200)
+
+        const versionOne = await getResponseOne.json()
+
+        const putResponseTwo = await fetch(url, { method: 'PUT', body: JSON.stringify({
+                ...versionOne,
+                foo: 'baz',
+                version: 1,
+            })})
+
+        expect(putResponseTwo.status).toBe(409)
+    })
 })
