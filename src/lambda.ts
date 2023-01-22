@@ -11,7 +11,7 @@ export const getResource: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV
     = async(event, context) => {
     const id = event?.pathParameters?.id
 
-    const document = await documentClient.get({
+    const { Item: retrievedItem } = await documentClient.get({
         TableName,
         Key: {
             id,
@@ -19,7 +19,14 @@ export const getResource: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV
         }
     })
 
-    console.log({document})
+    console.log({retrievedItem})
+
+    if (retrievedItem === undefined) {
+        return {
+            statusCode: 404,
+            body: 'no item found'
+        }
+    }
 
     return {
         statusCode: 200,

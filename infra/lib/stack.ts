@@ -22,7 +22,7 @@ export class Stack extends cdk.Stack {
             functionName: 'getResource',
             runtime: awsLambda.Runtime.NODEJS_18_X,
             handler: 'lambda.getResource',
-            code: awsLambda.Code.fromAsset(path.join(__dirname, '../../tsc.out/')),
+            code: awsLambda.Code.fromAsset(path.join(__dirname, '../../tsc.out/src')),
             environment: {
                 DYNAMO_TABLE_NAME: table.tableName,
             }

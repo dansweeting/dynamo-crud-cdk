@@ -2,6 +2,7 @@
   "name": "dynamo-crud-cdk",
   "version": "0.1.0",
   "scripts": {
+    "prebuild": "rm -rf tsc.out",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
