@@ -39,7 +39,25 @@ export const getResource: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV
 }
 
 const hasConflict = async (id: string | undefined, version: number): Promise<Boolean> => {
-    return await getItem(id, version.toString()) !== undefined
+
+    const [preExistingItem, latestItem = {}] = await Promise.all([
+        getItem(id, version.toString()),
+        getItem(id, 'latest')
+    ])
+
+    if (preExistingItem !== undefined) {
+        console.log(`PUT conflict: Detected an item clashing with id ${id} and version ${version}.`)
+        return true
+    }
+
+    const latestVersion = latestItem['version'] ?? 0
+    const expectedNextVersion = Number(latestVersion) + 1
+    if (version !== expectedNextVersion) {
+        console.log(`PUT conflict: Attempted to create new version for id ${id} version ${version}, when the expected next version number is ${expectedNextVersion}.`)
+        return true
+    }
+
+    return false
 }
 
 export const putResource: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2>

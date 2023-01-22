@@ -99,4 +99,27 @@ describe('CRUD API', () => {
 
         expect(putResponseTwo.status).toBe(409)
     })
+
+    it('PUT with out-of-order version number is a 409 conflict', async () => {
+        const id = guid()
+        const url = `${apiBaseUrl}/${id}`
+
+        const resource = { foo: 'bar', child: { foo: 'child bar'}}
+        const putResponseOne = await fetch(url, { method: 'PUT', body: JSON.stringify(resource) })
+
+        expect(putResponseOne.status).toBe(200)
+
+        const getResponseOne = await fetch(url, { method: 'GET'})
+        expect(getResponseOne.status).toBe(200)
+
+        const versionOne = await getResponseOne.json()
+
+        const putResponseTwo = await fetch(url, { method: 'PUT', body: JSON.stringify({
+                ...versionOne,
+                foo: 'baz',
+                version: 99, // since the expected next version is 2
+            })})
+
+        expect(putResponseTwo.status).toBe(409)
+    })
 })
