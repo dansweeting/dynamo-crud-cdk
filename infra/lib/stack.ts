@@ -28,6 +28,16 @@ export class Stack extends cdk.Stack {
             }
         })
 
+        const lambdaPutResource = new awsLambda.Function(this,'lambdaPutResource',{
+            functionName: 'putResource',
+            runtime: awsLambda.Runtime.NODEJS_18_X,
+            handler: 'lambda.putResource',
+            code: awsLambda.Code.fromAsset(path.join(__dirname, '../../tsc.out/src')),
+            environment: {
+                DYNAMO_TABLE_NAME: table.tableName,
+            }
+        })
+
         table.grantReadData(lambdaGetResource)
 
         const restApi = new apigateway.RestApi(this, 'apiGateway', {
@@ -37,6 +47,9 @@ export class Stack extends cdk.Stack {
         const resource = restApi.root.resourceForPath('rest-resource/{id}')
         resource.addMethod('GET', new apigateway.LambdaIntegration(
             lambdaGetResource,
+        ));
+        resource.addMethod('PUT', new apigateway.LambdaIntegration(
+            lambdaPutResource,
         ));
 
         new cdk.CfnOutput(this, 'crudRestApiUrl', { value: restApi.url })

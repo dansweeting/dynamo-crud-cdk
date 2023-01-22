@@ -19,8 +19,6 @@ export const getResource: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV
         }
     })
 
-    console.log({retrievedItem})
-
     if (retrievedItem === undefined) {
         return {
             statusCode: 404,
@@ -34,3 +32,11 @@ export const getResource: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV
     }
 }
 
+export const putResource: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2>
+    = async(event, context) => {
+    const id = event?.pathParameters?.id
+
+    const body = JSON.parse(event?.body || '{}')
+
+    return { statusCode: 301 }
+}
