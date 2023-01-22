@@ -15,7 +15,7 @@ export const getResource: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV
         TableName,
         Key: {
             id,
-            version: 0
+            sortKey: 'latest'
         }
     })
 
@@ -28,7 +28,7 @@ export const getResource: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV
 
     return {
         statusCode: 200,
-        body: JSON.stringify({ id })
+        body: JSON.stringify(retrievedItem)
     }
 }
 
@@ -36,7 +36,23 @@ export const putResource: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV
     = async(event, context) => {
     const id = event?.pathParameters?.id
 
+    console.log({event})
+
     const body = JSON.parse(event?.body || '{}')
 
-    return { statusCode: 301 }
+    const { version = 1 } = body
+
+    const { Attributes } = await documentClient.put({
+        TableName,
+        Item: {
+            ...body,
+            id,
+            version,
+            sortKey: 'latest',
+        },
+    })
+
+    console.log({Attributes})
+
+    return { statusCode: 200 }
 }

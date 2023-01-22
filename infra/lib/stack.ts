@@ -13,7 +13,7 @@ export class Stack extends cdk.Stack {
         const table = new dynamodb.Table(this, "dynamoDbTable", {
             tableName: 'versionedCrudItems',
             partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING},
-            sortKey: { name: 'version', type: dynamodb.AttributeType.NUMBER},
+            sortKey: { name: 'sortKey', type: dynamodb.AttributeType.STRING},
             removalPolicy: RemovalPolicy.DESTROY,
             billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
         });
@@ -39,6 +39,7 @@ export class Stack extends cdk.Stack {
         })
 
         table.grantReadData(lambdaGetResource)
+        table.grantReadWriteData(lambdaPutResource)
 
         const restApi = new apigateway.RestApi(this, 'apiGateway', {
             restApiName: 'crudRestApi',
